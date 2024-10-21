@@ -1,39 +1,52 @@
-name: CI Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
     branches:
       - develop
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'  # You can specify the version you need
-    
-    - name: Install dependencies
-      run: npm install
+      # Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
 
-    - name: Lint TypeScript code
-      run: npm run lint  # Make sure you have linting script defined in package.json
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
 
-    - name: Run unit tests
-      run: npm test  # Ensure you have test script in package.json
+      # Lint the TypeScript code
+      - name: Lint code
+        run: npm run lint
 
-    - name: Build the TypeScript application
-      run: npm run build  # Ensure you have build script in package.json
+      # Run the unit tests
+      - name: Run unit tests
+        run: npm test
 
-    - name: Build Docker image
-      run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/urban-mobility-smart-transportation:latest .
-        docker push ${{ secrets.DOCKER_USERNAME }}/urban-mobility-smart-transportation:latest
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      # Build the TypeScript application
+      - name: Build application
+        run: npm run build
+
+      # Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/urban-mobility-smart-transportation:${{ github.sha }} .
+
+      # Push Docker image to Docker Hub
+      - name: Push Docker image to Docker Hub
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker push ${{ secrets.DOCKER_USERNAME }}/urban-mobility-smart-transportation:${{ github.sha }}
+
+  # Optionally, you can include a deployment job to deploy the app if needed
