@@ -3,48 +3,37 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - develop  # Trigger on push to the 'develop' branch
-  pull_request:
-    branches:
-      - develop  # Trigger on pull requests to the 'develop' branch
+      - develop
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
-
+    runs-on: ubuntu-latest
+    
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2  # Check out the code from the repository
+      uses: actions/checkout@v2
 
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '16'  # Specify the Node.js version
-
+        node-version: '16'  # You can specify the version you need
+    
     - name: Install dependencies
-      run: npm install  # Install the dependencies
+      run: npm install
 
-    - name: Lint the code
-      run: npm run lint  # Lint the TypeScript code
+    - name: Lint TypeScript code
+      run: npm run lint  # Make sure you have linting script defined in package.json
 
     - name: Run unit tests
-      run: npm test  # Run the unit tests
+      run: npm test  # Ensure you have test script in package.json
 
-    - name: Build the application
-      run: npm run build  # Build the TypeScript application
+    - name: Build the TypeScript application
+      run: npm run build  # Ensure you have build script in package.json
 
     - name: Build Docker image
       run: |
-        docker build -t your-dockerhub-username/urban-mobility-app:$GITHUB_SHA .
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/urban-mobility-smart-transportation:latest .
+        docker push ${{ secrets.DOCKER_USERNAME }}/urban-mobility-smart-transportation:latest
       env:
-        DOCKER_BUILDKIT: 1
-
-    - name: Login to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Push Docker image to Docker Hub
-      run: |
-        docker push your-dockerhub-username/urban-mobility-app:$GITHUB_SHA
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
