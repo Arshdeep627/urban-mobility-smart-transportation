@@ -13,6 +13,7 @@ The Urban Mobility and Smart Transportation Network is a comprehensive system de
 - **Data Analytics and Prediction Engine**: Machine learning models for predicting traffic patterns.
 
 ## Setup Instructions
+## Name of the group members
 
 ### Local Setup
 1. Clone the repository:
