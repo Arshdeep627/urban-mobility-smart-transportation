@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Urban Mobility and Smart Transportation Network
 
 ## Overview
@@ -20,3 +21,7 @@ The Urban Mobility and Smart Transportation Network is a comprehensive system de
    ```bash
    git clone https://github.com/your-username/urban-mobility-smart-transportation.git
    cd urban-mobility-smart-transportation
+=======
+# urban-mobility-smart-transportation
+The Urban Mobility and Smart Transportation Network is a comprehensive system designed to optimize public transportation, reduce traffic congestion, and improve overall mobility in a metropolitan area. 
+>>>>>>> 66bf775 (Initial commit)
